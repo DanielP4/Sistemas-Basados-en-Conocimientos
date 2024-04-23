@@ -1,0 +1,110 @@
+(deftemplate Disease
+   (slot name)
+   (multislot symptoms)
+)
+
+(deftemplate Answer
+   (slot name)
+   (slot response)
+)
+
+(deffacts Diseases
+   (Disease (name Flu) (symptoms Fever Cough Fatigue Body_aches))
+   (Disease (name Common_Cold) (symptoms Cough Runny_nose Sneezing Sore_throat))
+   (Disease (name Pneumonia) (symptoms Fever Cough Shortness_of_breath Chest_pain))
+   (Disease (name Bronchitis) (symptoms Cough Fatigue Shortness_of_breath Chest_pain))
+   (Disease (name COVID-19) (symptoms Fever Cough Shortness_of_breath Loss_of_taste_or_smell))
+   (Disease (name Hay_Fever) (symptoms Runny_nose Sneezing Nasal_congestion Watery_eyes))
+)
+
+
+(defrule DisplayDiseases
+   (Disease (name ?name) (symptoms $?symptoms))
+   =>
+   (printout t "Disease: " ?name " | Symptoms: " ?symptoms crlf)
+)
+
+
+(defrule Questions
+   =>
+   (printout t "Do you have fever? (y/n): ")
+   (bind ?fever (read))
+   (assert(Answer (name fever) (response ?fever)))
+   (if (eq ?fever n)
+      then
+      (printout t "Do you have cough? (y/n): ")
+      (bind ?cough (read))
+      (assert(Answer (name cough) (response ?cough)))
+      else
+      (printout t "")
+   )
+   (if (or (eq ?fever y) (eq ?cough y))
+      then
+      (printout t "Do you have fatigue? (y/n): ")
+      (bind ?fatigue (read))
+      (assert(Answer (name fatigue) (response ?fatigue)))
+      else
+      (printout t "")
+   )
+   (if (and (eq ?fever y) (eq ?fatigue n))
+      then
+      (printout t "Do you have chest pain? (y/n): ")
+      (bind ?chest_pain (read))
+      (assert(Answer (name chest_pain) (response ?chest_pain)))
+      else
+      (printout t "")
+   )
+)
+ 
+
+(defrule  is_Hay_fever
+   (Answer (name fever) (response n))
+   (Answer (name cough) (response n))
+   =>
+   (printout t "You may have Hay Fever." crlf)
+   (printout t "Symptoms: Runny nose, Sneezing, Nasal congestion, Watery eyes" crlf)
+)
+
+(defrule is_Common_Cold
+   (Answer (name fever) (response n))
+   (Answer (name cough) (response y))
+   (Answer (name fatigue) (response n))
+   =>
+   (printout t "You may have Common Cold." crlf)
+   (printout t "Symptoms: Cough, Runny nose, Sneezing, Sore throat" crlf)
+)
+
+(defrule is_Bronchitis
+   (Answer (name fever) (response n))
+   (Answer (name cough) (response y))
+   (Answer (name fatigue) (response y))
+   =>
+   (printout t "You may have Bronchitis." crlf)
+   (printout t "Symptoms: Cough, Fatigue, Shortness of breath, Chest pain" crlf)
+)
+
+(defrule is_Flu
+   (Answer (name fever) (response y))
+   (Answer (name cough) (response y))
+   =>
+   (printout t "You may have Flu." crlf)
+   (printout t "Symptoms: Fever, Cough, Fatigue, Body aches" crlf)
+)
+
+(defrule is_COVID_19
+   (Answer (name fever) (response y))
+   (Answer (name fatigue) (response n))
+   (Answer (name chest_pain) (response n))
+   =>
+   (printout t "You may have COVID-19." crlf)
+   (printout t "Symptoms: Fever, Cough, Shortness of breath, Loss of taste or smell" crlf)
+)
+
+(defrule is_Pneumonia
+   (Answer (name fever) (response y))
+   (Answer (name fatigue) (response n))
+   (Answer (name chest_pain) (response y))
+   =>
+   (printout t "You may have Pneumonia." crlf)
+   (printout t "Symptoms: Fever, Cough, Shortness of breath, Chest pain" crlf)
+)

@@ -1,0 +1,24 @@
+(deftemplate Disease
+   (slot name)
+   (multislot signs)
+   (multislot symptoms))
+
+(assert(Disease (name Cold) (signs runny_nose sneezing) (symptoms fever cough)))
+(assert(Disease (name Flu) (signs Fever Body_aches) (symptoms Headache Fatigue)))
+(assert(Disease (name Allergy) (signs Sneezing Itchy_eyes) (symptoms Runny_nose Skin_rash)))
+(assert(Disease (name Asthma) (signs Wheezing Shortness_of_breath) (symptoms Chest_tightness Cough)))
+(assert(Disease (name Pneumonia) (signs High_fever Chills) (symptoms Cough_with_phlegms_or_pus Difficulty_breathing)))
+(assert(Disease (name Sinusitis) (signs Facial_pain Nasal_congestion) (symptoms Postnasal_drip Loss_of_smell_or_taste)))
+
+(defrule DisplayDiseases
+   (Disease (name ?name) (signs $?signs) (symptoms $?symptoms))
+   =>
+   (printout t "Disease: " ?name " | Signs: " ?signs " | Symptoms: " ?symptoms crlf))
+
+(defrule RemoveDisease
+   =>
+   (printout t "Enter the ID of the disease you want to remove: ")
+   (bind ?idToRemove (read))
+   (retract ?idToRemove)
+   (printout t "Disease with ID " ?idToRemove " removed." crlf)
+)
